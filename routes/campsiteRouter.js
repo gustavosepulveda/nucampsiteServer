@@ -15,7 +15,6 @@ campsiteRouter.route('/')
     })
     .catch(err => next(err));
 })
-
 .post(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Campsite.create(req.body)
     .then(campsite => {
@@ -26,7 +25,6 @@ campsiteRouter.route('/')
     })
     .catch(err => next(err));
 })
-
 .put(authenticate.verifyUser, (req, res) => {
     res.statusCode = 403;
     res.end('PUT operation not supported on /campsites');
@@ -67,7 +65,6 @@ campsiteRouter.route('/:campsiteId')
     })
     .catch(err => next(err));
 })
-
 .delete(authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
     Campsite.findByIdAndDelete(req.params.campsiteId)
     .then(response => {
