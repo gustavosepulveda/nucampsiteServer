@@ -1,8 +1,7 @@
-var express = require('express');
+const express = require('express');
 const Favorite = require('../models/favorite');
 const authenticate = require('../authenticate');
 const cors = require('./cors');
-const { response } = require('express');
 
 const favoriteRouter = express.Router();
 
@@ -57,7 +56,7 @@ favoriteRouter.route('/')
     res.end('PUT operation not supported on /favorites');
 })
 .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
-    Favorite.fineOneAndDelete({ user: req.user._id })
+    Favorite.findOneAndDelete({ user: req.user._id })
         .then(favorite => {
             res.statusCode = 200;
             if (favorite) {
@@ -87,7 +86,7 @@ favoriteRouter.route('/:campsiteId')
                 favorite.save()
                 .then(favorite => {
                     res.statusCode = 200;
-                    res.setHeader('Content-Type', 'application/plain');
+                    res.setHeader('Content-Type', 'application/json');
                     res.json(favorite);
                 })
                 .catch(err => next(err));
@@ -110,7 +109,7 @@ favoriteRouter.route('/:campsiteId')
 })
 .put(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     res.statusCode = 403
-    res.end(`PUT operation not supported on /favorites/${req.params.camspiteId}`);
+    res.end(`PUT operation not supported on /favorites/${req.params.campsiteId}`);
 })
 .delete(cors.corsWithOptions, authenticate.verifyUser, (req, res, next) => {
     Favorite.findOne({user: req.user._id })
@@ -122,18 +121,14 @@ favoriteRouter.route('/:campsiteId')
             }
             favorite.save()
             .then(favorite => {
-                Favorite.findById(favorite._id)
-                .then(favorite => {
                     console.log('Favorite Campsite Deleted!', favorite);
                     res.statusCode = 200;
                     res.setHeader('Content-Type', 'application/json');
                     res.json(favorite);
-                })
             }).catch(err => next(err));
         } else {
             res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.json(favorite);
+            res.setHeader('Content-Type', 'text/plain');
         }
     })
     .catch(err => next(err));
